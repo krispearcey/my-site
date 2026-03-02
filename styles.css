@@ -1044,14 +1044,22 @@ body.is-locked{
     width: min(86vw, 680px);
     grid-template-columns: 1fr;
     grid-template-rows: auto auto auto;
-    gap: 16px;
+    gap: 10px;
   }
-
+   
+  /* reduce top offset of overlay content */
+  .about-overlay__content{
+    padding-top: 48px;   /* try 40–60px to taste */
+  }
+   
   .about-overlay__title-row{
     grid-column: 1;
     grid-row: 1;
+    min-height: auto;
   }
 
+
+   
 /* Hide on Mobile */   
 .about-overlay__polaroid{
   display: none;

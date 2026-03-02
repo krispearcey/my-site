@@ -677,9 +677,7 @@ html.js .hero__headline{
   .list__meta { text-align: left; }
 }
 
-.about-overlay__polaroid{
-  display: none !important;
-}
+
 
 /* =========================
    Reduced motion
@@ -1054,12 +1052,10 @@ body.is-locked{
     grid-row: 1;
   }
 
-  .about-overlay__polaroid{
-    grid-column: 1;
-    grid-row: 2;
-    width: min(70vw, 320px);
-    margin-top: 12px;
-  }
+/* Hide on Mobile */   
+.about-overlay__polaroid{
+  display: none;
+}
 
   .about-overlay__body{
     grid-column: 1;

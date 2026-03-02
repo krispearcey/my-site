@@ -677,6 +677,10 @@ html.js .hero__headline{
   .list__meta { text-align: left; }
 }
 
+.about-overlay__polaroid{
+  display: none !important;
+}
+
 /* =========================
    Reduced motion
    ========================= */

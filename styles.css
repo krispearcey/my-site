@@ -597,6 +597,12 @@ html.js .hero__headline{
 .socials.show a:nth-child(5) { animation-delay: 360ms; }
 .socials.show a:nth-child(6) { animation-delay: 450ms; }
 
+.nav-icon{
+  width: 18px;
+  height: 18px;
+  fill: currentColor;   /* ← THIS is the magic */
+  transition: opacity .25s ease, transform .2s ease;
+}
 
 /* =========================
    Per-letter hover grow

@@ -171,6 +171,29 @@ document.addEventListener("DOMContentLoaded", () => {
   const overlayTriggers = document.querySelectorAll("[data-about-overlay]");
   let activeTrigger = null;
 
+  // ✅ CHANGE #1: clicking the overlay title opens the active card URL
+  function openOverlayLink() {
+    const url = overlayTitleEl?.dataset?.href;
+    if (!url) return;
+    window.open(url, "_blank", "noopener");
+  }
+
+  overlayTitleEl?.addEventListener("click", (e) => {
+    if (!overlayTitleEl?.dataset?.href) return;
+    e.preventDefault();
+    e.stopPropagation();
+    openOverlayLink();
+  });
+
+  overlayTitleEl?.addEventListener("keydown", (e) => {
+    if (!overlayTitleEl?.dataset?.href) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      e.stopPropagation();
+      openOverlayLink();
+    }
+  });
+
   // Prevent layout shift when locking scroll
   function getScrollbarWidth() {
     return window.innerWidth - document.documentElement.clientWidth;
@@ -206,26 +229,35 @@ document.addEventListener("DOMContentLoaded", () => {
     const title = fromEl.getAttribute("data-overlay-title");
     const body = fromEl.getAttribute("data-overlay-body");
     const meta = fromEl.getAttribute("data-overlay-meta");
+    const href = fromEl.getAttribute("href"); // ✅ card URL
 
     if (overlayTitleEl && title) overlayTitleEl.innerHTML = title;
+
+    // store URL on title so it can be opened when clicked
+    if (overlayTitleEl) {
+      overlayTitleEl.dataset.href = href || "";
+      overlayTitleEl.tabIndex = href ? 0 : -1;
+      if (href) overlayTitleEl.setAttribute("role", "link");
+      else overlayTitleEl.removeAttribute("role");
+    }
+
     const showIcon = fromEl.getAttribute("data-overlay-link-icon");
-overlayTitleEl?.classList.toggle(
-  "has-link-icon",
-  showIcon === "true"
-);
+    overlayTitleEl?.classList.toggle("has-link-icon", showIcon === "true");
+
     if (overlayBodyEl && body) overlayBodyEl.innerHTML = body;
     if (overlayMetaEl) overlayMetaEl.textContent = meta ?? "";
-const polaroidSrc = fromEl.getAttribute("data-overlay-polaroid");
 
-if (overlayPolaroidEl) {
-  if (polaroidSrc) {
-    overlayPolaroidEl.src = polaroidSrc;
-    overlayPolaroidEl.classList.remove("is-hidden");
-  } else {
-    overlayPolaroidEl.removeAttribute("src");
-    overlayPolaroidEl.classList.add("is-hidden");
-  }
-}
+    const polaroidSrc = fromEl.getAttribute("data-overlay-polaroid");
+    if (overlayPolaroidEl) {
+      if (polaroidSrc) {
+        overlayPolaroidEl.src = polaroidSrc;
+        overlayPolaroidEl.classList.remove("is-hidden");
+      } else {
+        overlayPolaroidEl.removeAttribute("src");
+        overlayPolaroidEl.classList.add("is-hidden");
+      }
+    }
+
     const bg = fromEl.getAttribute("data-overlay-bg") || "#0b0b0b";
     overlayBg.style.setProperty("--about-overlay-bg", bg);
 
@@ -247,8 +279,9 @@ if (overlayPolaroidEl) {
     const prevTransition = overlayBg.style.transition;
     overlayBg.style.transition = "none";
 
-    overlayBg.style.transform =
-      `translate(${cardCenterX - rect.width / 2}px, ${cardCenterY - rect.height / 2}px) scale(1)`;
+    overlayBg.style.transform = `translate(${cardCenterX - rect.width / 2}px, ${
+      cardCenterY - rect.height / 2
+    }px) scale(1)`;
 
     overlay.classList.add("is-open");
     overlay.setAttribute("aria-hidden", "false");
@@ -264,8 +297,9 @@ if (overlayPolaroidEl) {
 
       requestAnimationFrame(() => {
         // animate bg to fullscreen (centered)
-        overlayBg.style.transform =
-          `translate(${vw / 2 - rect.width / 2}px, ${vh / 2 - rect.height / 2}px) scale(${scale})`;
+        overlayBg.style.transform = `translate(${vw / 2 - rect.width / 2}px, ${
+          vh / 2 - rect.height / 2
+        }px) scale(${scale})`;
 
         overlay.querySelector(".about-overlay__back")?.focus();
       });
@@ -287,8 +321,9 @@ if (overlayPolaroidEl) {
       const cardCenterX = rect.left + rect.width / 2;
       const cardCenterY = rect.top + rect.height / 2;
 
-      overlayBg.style.transform =
-        `translate(${cardCenterX - rect.width / 2}px, ${cardCenterY - rect.height / 2}px) scale(1)`;
+      overlayBg.style.transform = `translate(${cardCenterX - rect.width / 2}px, ${
+        cardCenterY - rect.height / 2
+      }px) scale(1)`;
     }
 
     // Match this to: .about-overlay__bg { transition: transform XXXms ... }
@@ -309,9 +344,12 @@ if (overlayPolaroidEl) {
     }, CLOSE_MS);
   }
 
-  // open triggers
+  // ✅ CHANGE #2: allow Ctrl/Cmd/Shift clicks to behave like a normal link
   overlayTriggers.forEach((trigger) => {
     trigger.addEventListener("click", (e) => {
+      // allow normal "open in new tab/window" gestures
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
       e.preventDefault();
       openAboutOverlay(trigger);
     });

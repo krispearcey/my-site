@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
      --------------------------- */
   const yourText = "Kris";
   const nameText = "Pearcey";
-  const headlineText = "Front-End Development & Design";
+  const headlineText = "Front-End Developer";
 
   const yourEl = document.getElementById("type-your");
   const nameEl = document.getElementById("type-name");
